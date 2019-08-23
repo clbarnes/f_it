@@ -65,4 +65,4 @@ Usage
 
     # evaluate operations, reading into a list
     # if tqdm is available, show progress bar
-    as_list = transformed.progress().apply(list)
+    as_list = transformed.progress().to(list)

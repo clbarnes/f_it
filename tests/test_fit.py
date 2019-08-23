@@ -76,8 +76,8 @@ def test_next():
         fiter.next()
 
 
-def test_apply(lst):
-    assert FIt(lst).apply(set) == set(lst)
+def test_to(lst):
+    assert FIt(lst).to(set) == set(lst)
 
 
 # builtin

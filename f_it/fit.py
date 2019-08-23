@@ -87,14 +87,14 @@ class FIt(Iterator):
         """Return the next item in the iterator"""
         return next(self)
 
-    def apply(self, fn: Callable[..., Any], *args, **kwargs):
+    def to(self, fn: Callable[..., Any], *args, **kwargs):
         """Apply a callable to the remainder of the iterator.
 
         e.g. convert the FIt into a ``list``, find the ``sum`` etc.
 
         :param fn: callable which takes 1 iterable argument, plus others to be passed with *args, **kwargs
-        :param args: passed to the function after the iterable
-        :param kwargs: passed to the function
+        :param args: passed to the callable after the iterable
+        :param kwargs: passed to the callable
         :return:
         """  # noqa
         return fn(self, *args, **kwargs)
