@@ -390,6 +390,17 @@ def test_progress(fiter, lst):
         MockTqdm.assert_called_once()
 
 
+def test_for_each(fiter, lst):
+    outer = []
+
+    def fn(item):
+        outer.append(item)
+
+    fiter.for_each(fn)
+
+    assert outer == lst
+
+
 def test_length():
     fiter = FIt(range(5))
     assert len(fiter) == 5

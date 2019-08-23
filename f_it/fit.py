@@ -591,6 +591,18 @@ class FIt(Iterator):
 
         return peeked[0] if n is None else peeked
 
+    def for_each(self, function: Callable, *args, **kwargs):
+        """Consume the iterator, applying a callable on each item.
+        Return values are discarded.
+
+        :param function: callable which takes an iterable as the first argument
+        :param args: additional args to pass to the callable
+        :param kwargs: additional kwargs to pass to the callable
+        :return:
+        """
+        for item in self:
+            function(item, *args, **kwargs)
+
     ############
     # optional #
     ############
