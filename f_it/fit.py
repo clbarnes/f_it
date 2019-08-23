@@ -453,8 +453,11 @@ class FIt(Iterator):
     def flatten(self, levels: Optional[int] = None, split_strings: bool = False):
         """Recursively flatten arbitrary iterables (depth-first).
 
+        By default, strings are not treated as iterables to descend into.
+        If ``split_strings`` is truthy, their characters will be yielded individually.
+
         :param levels: How deep in the iterable to flatten (default all levels)
-        :param split_strings: Whether to treat strings as iterables to descend into (default False)
+        :param split_strings: Whether to yield individual characters from strings (default False)
         :return: FIt
         """  # noqa
         if levels is None:
