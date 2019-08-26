@@ -43,3 +43,11 @@ def n_permutations(n, r=None):
         return 0
 
     return math.factorial(n) // math.factorial(n - r)
+
+
+def aiter(obj):
+    async def gen():
+        async for item in obj:
+            yield item
+
+    return gen

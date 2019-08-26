@@ -21,7 +21,7 @@ setup_requirements = ["pytest-runner"]
 
 test_requirements = ["pytest"]
 
-extras_require = {}
+extras_require = {"progress": ["tqdm"], "async": ["aioitertools"]}
 extras_require["all"] = list(itertools.chain.from_iterable(extras_require.values()))
 
 setup(

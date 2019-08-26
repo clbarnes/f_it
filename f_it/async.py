@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import math
 import warnings
-from collections.abc import Iterator
+from collections.abc import AsyncIterator
 from collections import deque
-from itertools import (
+from aioitertools import (
+    enumerate,
+    next,
+    iter,
+    zip,
     zip_longest,
     islice,
     starmap,
@@ -28,27 +32,28 @@ from f_it.base import BaseFIt
 from f_it.utils import len_or_none, nCr, n_permutations
 
 
-def ensure_FIt(obj):
-    if isinstance(obj, FIt):
+def ensure_AFIt(obj):
+    if isinstance(obj, AsyncFIt):
         return obj
     else:
-        return FIt(obj)
+        return AsyncFIt(obj)
 
 
-class FIt(BaseFIt, Iterator):
+class AsyncFIt(BaseFIt, AsyncIterator):
     _iter = iter
+    _next = next
 
     def __next__(self):
         if self.cache:
             return self.cache.popleft()
         else:
-            item = next(self.iterator)
+            item = self._next(self.iterator)
             self.consumed += 1
             return item
 
     def next(self):
         """Return the next item in the iterator"""
-        return next(self)
+        return self._next(self)
 
     def to(self, fn: Callable[..., Any], *args, **kwargs):
         """Apply a callable to the remainder of the iterator.
