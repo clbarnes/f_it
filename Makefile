@@ -46,10 +46,12 @@ clean-pyc: ## remove Python file artifacts
 	find . -name '__pycache__' -exec rm -fr {} +
 
 clean-test: ## remove test and coverage artifacts
-	rm -fr .tox/
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
+
+clean-tox:
+	rm -fr .tox/
 
 fmt:
 	black $(PY_PATHS)
@@ -91,10 +93,10 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
+install: ## install the package to the active Python's site-packages
 	pip install .[all]
 
-install-dev: clean
+install-dev:
 	pip install -r requirements.txt && pip install -e .[all]
 
 patch: test-all docs
