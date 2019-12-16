@@ -8,7 +8,7 @@ pip==19.3.1
 bump2version==0.5.11
 wheel==0.33.6
 watchdog==0.9.0
-Sphinx==2.2.2
+Sphinx==2.3.0
 twine==3.1.1
 black==19.10b0
 pre-commit==1.20.0
