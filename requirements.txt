@@ -1,6 +1,6 @@
 # optional
 
-tqdm==4.44.1
+tqdm==4.45.0
 
 # development
 
