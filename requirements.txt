@@ -16,7 +16,7 @@ pre-commit==2.5.1
 # test
 
 flake8==3.8.2
-tox==3.15.1
+tox==3.16.1
 coverage==5.1
 pytest==5.4.3
 pytest-runner==5.2
