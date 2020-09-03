@@ -34,6 +34,14 @@ def ensure_FIt(obj):
         return FIt(obj)
 
 
+neg_idx_msg = (
+    "Negative indices into FIt are only possible "
+    "when it has a known length"
+)
+
+EMPTY = object()
+
+
 class FIt(Iterator):
     def __init__(self, iterable: Iterable, length=None):
         """Iterator class providing many postfix functional methods.
@@ -94,6 +102,18 @@ class FIt(Iterator):
         elif isinstance(other, Iterator):
             return FIt(other).chain(self)
         return NotImplemented
+
+    def __getitem__(self, idx):
+        if isinstance(idx, int):
+            if idx < 0 and len_or_none(self) is None:
+                raise ValueError(neg_idx_msg)
+            return self.get(idx)
+        elif isinstance(idx, slice):
+            return self.islice(idx.start, idx.stop, idx.step)
+        else:
+            raise TypeError(
+                "FIt indices must be integers or slices, not " + type(idx).__name__
+            )
 
     def next(self):
         """Return the next item in the iterator"""
@@ -328,19 +348,34 @@ class FIt(Iterator):
         """  # noqa
         return FIt(groupby(self, key))
 
-    def islice(self, start: int, stop: Optional[int] = None, step: int = 1):
+    def islice(
+        self, start: int, stop: Optional[int] = None, step: Optional[int] = None
+    ):
         """See itertools.islice_
+
+        Difference from stdlib: if the FIt length is known, negative indices are allowed,
+        although a negative step size is still not.
 
         .. _itertools.islice: https://docs.python.org/3/library/itertools.html#itertools.islice
         """  # noqa
         if stop is None:
             stop = start
             start = 0
+        if step is None:
+            step = 1
 
         this_len = len_or_none(self)
         if this_len is None:
+            if start < 0 or stop < 0:
+                raise ValueError(neg_idx_msg)
+
             length = None
         else:
+            if start < 0:
+                start = max(this_len - start, 0)
+            if stop < 0:
+                stop = max(this_len - stop, 0)
+
             length = max(math.ceil((min(stop, this_len) - start) / step), 0)
 
         return FIt(islice(self, start, stop, step), length)
@@ -448,15 +483,26 @@ class FIt(Iterator):
             next(self.islice(n, n), None)
         return self
 
-    def get(self, n: int, default=None):
-        """Alias for ``FIt.nth``: returns the nth item or a default value
+    def get(self, n: int, default=EMPTY):
+        """Alias for ``FIt.nth``: returns the nth item or a default value.
+
+        If default is not given, raises IndexError.
 
         Cannot be safely used as a static method.
         """
-        return next(self.islice(n, n + 1), default)
+        try:
+            result = next(self.islice(n, n + 1))
+        except StopIteration:
+            if default is EMPTY:
+                raise IndexError("FIt index out of range")
+            else:
+                result = default
+        return result
 
-    def nth(self, n: int, default=None):
-        """Returns the nth item or a default value
+    def nth(self, n: int, default=EMPTY):
+        """Returns the nth item or a default value.
+
+        If default is not given, raises IndexError.
 
         Cannot be safely used as a static method.
         """
