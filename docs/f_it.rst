@@ -20,6 +20,13 @@ f\_it.utils module
    :undoc-members:
    :show-inheritance:
 
+f\_it.version module
+--------------------
+
+.. automodule:: f_it.version
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

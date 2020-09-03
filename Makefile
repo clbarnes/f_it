@@ -99,11 +99,11 @@ install: ## install the package to the active Python's site-packages
 install-dev:
 	pip install -r requirements.txt && pip install -e .[all]
 
-patch: test-all docs
+patch: test docs
 	bumpversion patch
 
-minor: test-all docs
+minor: test docs
 	bumpversion minor
 
-major: test-all docs
+major: test docs
 	bumpversion major
