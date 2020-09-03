@@ -22,7 +22,15 @@ from itertools import (
     cycle,
     count,
 )
-from typing import Iterable, Optional, Callable, Any, List, Iterator as IteratorType
+from typing import (
+    Iterable,
+    Optional,
+    Callable,
+    Any,
+    List,
+    Iterator as IteratorType,
+    Union,
+)
 
 from f_it.utils import len_or_none, nCr, n_permutations
 
@@ -35,8 +43,7 @@ def ensure_FIt(obj):
 
 
 neg_idx_msg = (
-    "Negative indices into FIt are only possible "
-    "when it has a known length"
+    "Negative indices into FIt are only possible " "when it has a known length"
 )
 
 EMPTY = object()
@@ -92,18 +99,30 @@ class FIt(Iterator):
             return item
 
     def __add__(self, other: IteratorType):
+        """Shorthand for ``FIt.chain(self, other)``.
+
+        Requires ``other`` to be an ``Iterator`` (not just an ``Iterable``).
+        """
         if isinstance(other, Iterator):
             return self.chain(other)
         return NotImplemented
 
     def __radd__(self, other: IteratorType):
+        """Shorthand for ``FIt.chain(other, self)``.
+
+        Requires ``other`` to be an ``Iterator`` (not just an ``Iterable``!).
+        """
         if isinstance(other, FIt):
             return other.chain(self)
         elif isinstance(other, Iterator):
             return FIt(other).chain(self)
         return NotImplemented
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: Union[int, slice]):
+        """Shorthand for ``.get`` or ``.islice``.
+
+        Depending on whether an integer or slice is given.
+        """
         if isinstance(idx, int):
             if idx < 0 and len_or_none(self) is None:
                 raise ValueError(neg_idx_msg)
@@ -372,9 +391,9 @@ class FIt(Iterator):
             length = None
         else:
             if start < 0:
-                start = max(this_len - start, 0)
+                start = max(this_len + start, 0)
             if stop < 0:
-                stop = max(this_len - stop, 0)
+                stop = max(this_len + stop, 0)
 
             length = max(math.ceil((min(stop, this_len) - start) / step), 0)
 
@@ -487,9 +506,17 @@ class FIt(Iterator):
         """Alias for ``FIt.nth``: returns the nth item or a default value.
 
         If default is not given, raises IndexError.
+        Accepts negative index if length is known.
 
         Cannot be safely used as a static method.
         """
+        if n < 0:
+            this_len = len_or_none(self)
+            if this_len is None:
+                raise ValueError(neg_idx_msg)
+            n = this_len + n
+            if n < 0:
+                raise IndexError("FIt index out of range")
         try:
             result = next(self.islice(n, n + 1))
         except StopIteration:
@@ -503,6 +530,7 @@ class FIt(Iterator):
         """Returns the nth item or a default value.
 
         If default is not given, raises IndexError.
+        Accepts negative index if length is known.
 
         Cannot be safely used as a static method.
         """

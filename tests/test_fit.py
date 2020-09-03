@@ -90,6 +90,26 @@ def test_radd(fiter, lst):
     assert list(new) == lst * 2
 
 
+def test_getitem(lst):
+    fiter = FIt(lst)
+    assert fiter[2] == lst[2]
+
+
+def test_getitem_neg(lst):
+    fiter = FIt(lst)
+    assert fiter[-1] == lst[-1]
+
+
+def test_getitem_neg_nolen(lst):
+    fiter = FIt(iter(lst))
+    with pytest.raises(ValueError):
+        fiter[-1]
+
+
+def test_getitem_slice(fiter, lst):
+    assert list(fiter[2:12:3]) == lst[2:12:3]
+
+
 # builtin
 
 
@@ -244,6 +264,11 @@ def test_groupby(fiter, lst):
 
 def test_islice(fiter, lst):
     assert_equal_it(fiter.islice(5, 10), lst[5:10])
+
+
+def test_islice_neg(lst):
+    fiter = FIt(lst)
+    assert_equal_it(fiter.islice(5, -2), lst[5:-2])
 
 
 def test_permutations(fiter, lst):
