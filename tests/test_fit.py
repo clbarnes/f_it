@@ -80,6 +80,16 @@ def test_to(lst):
     assert FIt(lst).to(set) == set(lst)
 
 
+def test_add(fiter, lst):
+    new = fiter + iter(lst)
+    assert list(new) == lst * 2
+
+
+def test_radd(fiter, lst):
+    new = iter(lst) + fiter
+    assert list(new) == lst * 2
+
+
 # builtin
 
 

@@ -22,7 +22,7 @@ from itertools import (
     cycle,
     count,
 )
-from typing import Iterable, Optional, Callable, Any, List
+from typing import Iterable, Optional, Callable, Any, List, Iterator as IteratorType
 
 from f_it.utils import len_or_none, nCr, n_permutations
 
@@ -82,6 +82,18 @@ class FIt(Iterator):
             item = next(self.iterator)
             self.consumed += 1
             return item
+
+    def __add__(self, other: IteratorType):
+        if isinstance(other, Iterator):
+            return self.chain(other)
+        return NotImplemented
+
+    def __radd__(self, other: IteratorType):
+        if isinstance(other, FIt):
+            return other.chain(self)
+        elif isinstance(other, Iterator):
+            return FIt(other).chain(self)
+        return NotImplemented
 
     def next(self):
         """Return the next item in the iterator"""
