@@ -5,6 +5,7 @@
 import os
 
 from setuptools import setup, find_packages
+import runpy
 import itertools
 
 here = os.path.dirname(os.path.realpath(__file__))
@@ -14,6 +15,8 @@ with open(os.path.join(here, "README.rst")) as readme_file:
 
 with open(os.path.join(here, "HISTORY.rst")) as history_file:
     history = history_file.read()
+
+version = runpy.run_path(os.path.join(here, "f_it", "version.py"))["__version__"]
 
 requirements = []
 
@@ -50,6 +53,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/clbarnes/f_it",
-    version="0.2.1",
+    version=version,
     zip_safe=False,
 )
