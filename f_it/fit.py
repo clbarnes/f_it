@@ -121,7 +121,10 @@ class FIt(Iterator):
     def __getitem__(self, idx: Union[int, slice]):
         """Shorthand for ``.get`` or ``.islice``.
 
-        Depending on whether an integer or slice is given.
+        Depending on whether an integer or slice is given,
+        returns either a single item (see ``.get``),
+        or an ``FIt`` instance (see ``.islice``).
+        Consumes necessary iterator elements.
         """
         if isinstance(idx, int):
             if idx < 0 and len_or_none(self) is None:
@@ -374,6 +377,8 @@ class FIt(Iterator):
 
         Difference from stdlib: if the FIt length is known, negative indices are allowed,
         although a negative step size is still not.
+        Consumes elements up to and including the start index;
+        subsequent items are consumed by the returned iterator.
 
         .. _itertools.islice: https://docs.python.org/3/library/itertools.html#itertools.islice
         """  # noqa
@@ -507,6 +512,7 @@ class FIt(Iterator):
 
         If default is not given, raises IndexError.
         Accepts negative index if length is known.
+        Consumes elements up to and including the given index.
 
         Cannot be safely used as a static method.
         """
@@ -531,6 +537,7 @@ class FIt(Iterator):
 
         If default is not given, raises IndexError.
         Accepts negative index if length is known.
+        Consumes elements up to and including the given index.
 
         Cannot be safely used as a static method.
         """

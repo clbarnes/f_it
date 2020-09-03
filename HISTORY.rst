@@ -2,6 +2,12 @@
 History
 =======
 
+0.4.0 (2020-09-03)
+------------------
+
+* Implement ``__getitem__``
+* Allow negative indices where possible
+
 0.3.0 (2020-09-03)
 ------------------
 
