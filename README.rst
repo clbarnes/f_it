@@ -33,6 +33,7 @@ Features
 
 Note that this package is for convenience/ interface comfort purposes
 and does not provide the guarantees of a true functional language.
+There may be a significant performance overhead to using deeply nested ``FIt`` instances in tight loops.
 
 Install
 -------
@@ -61,8 +62,11 @@ Usage
         2
     )
 
+    # __add__ and __radd__ are implemented for chaining other Iterators
+    added = transformed + iter([1, 2, 3])
+
     # nothing has been evaluated yet!
 
     # evaluate operations, reading into a list
     # if tqdm is available, show progress bar
-    as_list = transformed.progress().to(list)
+    as_list = added.progress().to(list)
