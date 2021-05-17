@@ -18,12 +18,11 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(include=["f_it*"]),
     install_requires=[],
-    python_requires=">=3.6, <4.0",
+    python_requires=">=3.7, <4.0",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
