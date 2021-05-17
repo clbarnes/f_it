@@ -1,38 +1,32 @@
 # -*- coding: utf-8 -*-
 import math
 import warnings
-from collections.abc import Iterator
 from collections import deque
+from collections.abc import Iterator
 from itertools import (
-    zip_longest,
-    islice,
-    starmap,
-    takewhile,
-    tee,
     chain,
+    combinations,
+    combinations_with_replacement,
     compress,
+    count,
+    cycle,
     dropwhile,
     filterfalse,
     groupby,
-    repeat,
-    product,
-    combinations,
-    combinations_with_replacement,
+    islice,
     permutations,
-    cycle,
-    count,
+    product,
+    repeat,
+    starmap,
+    takewhile,
+    tee,
+    zip_longest,
 )
-from typing import (
-    Iterable,
-    Optional,
-    Callable,
-    Any,
-    List,
-    Iterator as IteratorType,
-    Union,
-)
+from typing import Any, Callable, Iterable
+from typing import Iterator as IteratorType
+from typing import List, Optional, Union
 
-from f_it.utils import len_or_none, nCr, n_permutations
+from f_it.utils import len_or_none, n_permutations, nCr
 
 
 def ensure_FIt(obj):
@@ -42,9 +36,7 @@ def ensure_FIt(obj):
         return FIt(obj)
 
 
-neg_idx_msg = (
-    "Negative indices into FIt are only possible when it has a known length"
-)
+neg_idx_msg = "Negative indices into FIt are only possible when it has a known length"
 
 EMPTY = object()
 

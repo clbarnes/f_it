@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """The setup script."""
-import os
-
-from setuptools import setup, find_packages
-import runpy
 import itertools
+import os
+import runpy
+
+from setuptools import find_packages, setup
 
 here = os.path.dirname(os.path.realpath(__file__))
 

@@ -1,25 +1,24 @@
 from functools import reduce
 from itertools import (
-    zip_longest,
     chain,
     combinations,
     combinations_with_replacement,
     compress,
     count,
-    islice,
-    dropwhile,
     cycle,
+    dropwhile,
     filterfalse,
     groupby,
+    islice,
     permutations,
     product,
     starmap,
     takewhile,
+    zip_longest,
 )
 from unittest import mock
 
 import pytest
-
 from f_it import FIt
 from f_it.fit import ensure_FIt
 from f_it.utils import len_or_none
@@ -445,21 +444,27 @@ def test_length():
     assert len(fiter) == 4
 
 
-@pytest.mark.parametrize(["lst", "expected"], [
-    ([0, 0, 0], False),
-    ([0, 0, 1], True),
-    ([], False),
-])
+@pytest.mark.parametrize(
+    ["lst", "expected"],
+    [
+        ([0, 0, 0], False),
+        ([0, 0, 1], True),
+        ([], False),
+    ],
+)
 def test_any(lst, expected):
     fiter = FIt(lst)
     assert fiter.any() == expected
 
 
-@pytest.mark.parametrize(["lst", "expected"], [
-    ([1, 1, 1], True),
-    ([1, 1, 0], False),
-    ([], True),
-])
+@pytest.mark.parametrize(
+    ["lst", "expected"],
+    [
+        ([1, 1, 1], True),
+        ([1, 1, 0], False),
+        ([], True),
+    ],
+)
 def test_all(lst, expected):
     fiter = FIt(lst)
     assert fiter.all() == expected

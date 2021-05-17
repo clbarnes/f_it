@@ -1,6 +1,5 @@
 import pytest
-
-from f_it.utils import len_or_none, nCr, n_permutations
+from f_it.utils import len_or_none, n_permutations, nCr
 
 
 def test_len_or_none(lst):

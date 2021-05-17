@@ -54,11 +54,13 @@ clean-tox:
 	rm -fr .tox/
 
 fmt:
-	black $(PY_PATHS)
+	isort $(PY_PATHS) \
+	&& black $(PY_PATHS)
 
 lint: ## check style with flake8
 	flake8 $(PY_PATHS)
 	black --check $(PY_PATHS)
+	isort --check $(PY_PATHS)
 
 test: ## run tests quickly with the default Python
 	pytest -v
