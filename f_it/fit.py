@@ -194,11 +194,14 @@ class FIt(Iterator):
 
         return FIt(range(start, stop, step))
 
-    def zip(self, *iterables, longest=False, fill_value=None):
+    def zip(self, *iterables, longest=False, fill_value=None, strict=False):
         """See the builtin zip_
 
         Difference from stdlib: accepts ``longest`` kwarg, which makes this method
-        act like itertools.zip_longest_ (also accepts ``fill_value``)
+        act like itertools.zip_longest_ (also accepts ``fill_value``).
+
+        ``strict=True`` is only supported in python >=3.10
+        and will raise a TypeError in lower versions.
 
         .. _zip: https://docs.python.org/3/library/functions.html#zip
         .. _zip_longest: https://docs.python.org/3/library/itertools.html#itertools.zip_longest
@@ -213,7 +216,12 @@ class FIt(Iterator):
         except TypeError:
             length = None
 
-        return FIt(zip(*iterables), length)
+        if strict:
+            inner = zip(*iterables, strict=True)
+        else:
+            inner = zip(*iterables)
+
+        return FIt(inner, length)
 
     #############
     # functools #
