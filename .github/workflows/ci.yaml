@@ -31,8 +31,7 @@ jobs:
           pip install -U pip wheel setuptools
           pip install -r requirements.txt
         name: Install dependencies
-      - run: |
-          pip install .
+      - run: pip install -e '.[all]'
         name: Install package
       - run: pytest --verbose
 

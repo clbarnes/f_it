@@ -1,9 +1,13 @@
+from itertools import chain
 from pathlib import Path
 
 from setuptools import find_packages, setup
 
 with open(Path(__file__).resolve().parent / "README.md") as f:
     readme = f.read()
+
+extras = {"progress": ["tqdm"]}
+extras["all"] = sorted(set(chain.from_iterable(extras.values())))
 
 setup(
     name="f_it",
@@ -24,6 +28,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
+    extras_require=extras,
     use_scm_version=True,
     setup_requires=["setuptools_scm"],
 )
