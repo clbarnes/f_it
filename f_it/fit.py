@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import math
 import warnings
 from collections import deque
-from collections.abc import Iterator
 from itertools import (
     chain,
     combinations,
@@ -21,9 +22,18 @@ from itertools import (
     tee,
     zip_longest,
 )
-from typing import Any, Callable, Deque, Iterable
-from typing import Iterator as IteratorType
-from typing import List, Optional, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Deque,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 from f_it.utils import len_or_none, n_permutations, nCr
 
@@ -91,24 +101,29 @@ class FIt(Iterator[T]):
             self.consumed += 1
             return item
 
-    def __add__(self, other: IteratorType[T]):
+    def __add__(self, other: Iterator[T]):
         """Shorthand for ``FIt.chain(self, other)``.
 
         Requires ``other`` to be an ``Iterator`` (not just an ``Iterable``).
         """
-        if isinstance(other, Iterator):
+        try:
             return self.chain(other)
+        except Exception:
+            pass
         return NotImplemented
 
-    def __radd__(self, other: IteratorType[T]):
+    def __radd__(self, other: Iterator[T]):
         """Shorthand for ``FIt.chain(other, self)``.
 
         Requires ``other`` to be an ``Iterator`` (not just an ``Iterable``!).
         """
         if isinstance(other, FIt):
             return other.chain(self)
-        elif isinstance(other, Iterator):
-            return FIt(other).chain(self)
+        else:
+            try:
+                return FIt(other).chain(self)
+            except TypeError:
+                pass
         return NotImplemented
 
     def __getitem__(self, idx: Union[int, slice]):
@@ -150,21 +165,21 @@ class FIt(Iterator[T]):
     # Free functions #
     ##################
 
-    def enumerate(self, start=0):
+    def enumerate(self, start=0) -> FIt[Tuple[int, T]]:
         """See the builtin enumerate_
 
         .. _enumerate: https://docs.python.org/3/library/functions.html#enumerate
         """
         return FIt(enumerate(self, start), len_or_none(self))
 
-    def filter(self, function=None):
+    def filter(self, function=None) -> FIt[T]:
         """See the builtin filter_
 
         .. _filter: https://docs.python.org/3/library/functions.html#filter
         """
         return FIt(filter(function, self))
 
-    def map(self, function, *iterables, longest=True):
+    def map(self, function, *iterables, longest=True) -> FIt:
         """See the builtin map_
 
         Difference from stdlib: accepts ``longest`` kwarg, for whether to terminate
@@ -176,7 +191,7 @@ class FIt(Iterator[T]):
         return FIt.zip(self, *iterables, longest=longest).starmap(function)
 
     @classmethod
-    def range(cls, start, stop=None, step=1):
+    def range(cls, start, stop=None, step=1) -> FIt[int]:
         """See the builtin range_
 
         .. _range: https://docs.python.org/3/library/functions.html#func-range
@@ -187,7 +202,9 @@ class FIt(Iterator[T]):
 
         return FIt(range(start, stop, step))
 
-    def zip(self, *iterables, longest=False, fill_value=None, strict=False):
+    def zip(
+        self, *iterables, longest=False, fill_value=None, strict=False
+    ) -> FIt[Tuple]:
         """See the builtin zip_
 
         Difference from stdlib: accepts ``longest`` kwarg, which makes this method
@@ -241,7 +258,7 @@ class FIt(Iterator[T]):
     # itertools #
     #############
 
-    def chain(self, *iterables):
+    def chain(self, *iterables: Iterable[T]) -> FIt[T]:
         """See itertools.chain_
 
         .. _itertools.chain: https://docs.python.org/3/library/itertools.html#itertools.chain
@@ -255,7 +272,7 @@ class FIt(Iterator[T]):
 
         return FIt(chain.from_iterable(iterables), length)
 
-    def chain_from_iterable(self, iterable):
+    def chain_from_iterable(self, iterable: Iterable[Iterable[T]]) -> FIt[T]:
         """See itertools.chain.from_iterable_
 
         .. _itertools.chain.from_iterable: https://docs.python.org/3/library/itertools.html#itertools.chain.from_iterable
@@ -268,7 +285,7 @@ class FIt(Iterator[T]):
 
         return FIt(gen())
 
-    def combinations(self, r: int, replace=False):
+    def combinations(self, r: int, replace=False) -> FIt[Tuple[T, ...]]:
         """See itertools.combinations_
 
         Difference from stdlib: ``replace`` argument to use
@@ -288,7 +305,7 @@ class FIt(Iterator[T]):
 
         return FIt(combinations(self, r), length)
 
-    def combinations_with_replacement(self, r: int):
+    def combinations_with_replacement(self, r: int) -> FIt[Tuple[T, ...]]:
         """See itertools.combinations_with_replacement_
 
         .. _itertools.combinations_with_replacement: https://docs.python.org/3/library/itertools.html#itertools.combinations_with_replacement
@@ -301,7 +318,7 @@ class FIt(Iterator[T]):
 
         return FIt(combinations_with_replacement(self, r), length)
 
-    def compress(self, selectors: Iterable):
+    def compress(self, selectors: Iterable) -> FIt[T]:
         """See itertools.compress_
 
         .. _itertools.compress: https://docs.python.org/3/library/itertools.html#itertools.compress
@@ -309,14 +326,14 @@ class FIt(Iterator[T]):
         return FIt(compress(self, selectors))
 
     @classmethod
-    def count(cls, start: int = 0, step: int = 1):
+    def count(cls, start: int = 0, step: int = 1) -> FIt[int]:
         """See itertools.count_
 
         .. _itertools.count: https://docs.python.org/3/library/itertools.html#itertools.count
         """  # noqa
         return FIt(count(start, step))
 
-    def cycle(self, n: Optional[int] = None):
+    def cycle(self, n: Optional[int] = None) -> FIt[T]:
         """See itertools.cycle_
 
         Difference from stdlib: accepts ``n`` argument, for how many times it should be
@@ -344,7 +361,7 @@ class FIt(Iterator[T]):
 
         return FIt(gen(self))
 
-    def dropwhile(self, predicate: Optional[Callable[[Any], bool]] = None):
+    def dropwhile(self, predicate: Optional[Callable[[Any], bool]] = None) -> FIt[T]:
         """See itertools.dropwhile_
 
         Difference from stdlib: if predicate is None (default), use ``bool``
@@ -354,7 +371,7 @@ class FIt(Iterator[T]):
         predicate = predicate or bool
         return FIt(dropwhile(predicate, self))
 
-    def filterfalse(self, predicate: Callable[[Any], bool] = None):
+    def filterfalse(self, predicate: Callable[[Any], bool] = None) -> FIt[T]:
         """See itertools.filterfalse_
 
         Difference from stdlib: if predicate is None (default), use ``bool``
@@ -373,7 +390,7 @@ class FIt(Iterator[T]):
 
     def islice(
         self, start: int, stop: Optional[int] = None, step: Optional[int] = None
-    ):
+    ) -> FIt[T]:
         """See itertools.islice_
 
         Difference from stdlib: if the FIt length is known, negative indices are allowed,
@@ -405,7 +422,7 @@ class FIt(Iterator[T]):
 
         return FIt(islice(self, start, stop, step), length)
 
-    def permutations(self, r: Optional[int] = None):
+    def permutations(self, r: Optional[int] = None) -> FIt[Tuple[T, ...]]:
         """See itertools.permutations_
 
         .. _itertools.permutations: https://docs.python.org/3/library/itertools.html#itertools.permutations
@@ -418,7 +435,7 @@ class FIt(Iterator[T]):
 
         return FIt(permutations(self, r), length)
 
-    def product(self, *iterables, repeat: int = 1):
+    def product(self, *iterables, repeat: int = 1) -> FIt[Tuple[T, ...]]:
         """See itertools.product_
 
         .. _itertools.product: https://docs.python.org/3/library/itertools.html#itertools.product
@@ -434,7 +451,7 @@ class FIt(Iterator[T]):
         return FIt(product(*iterables, repeat=repeat), length)
 
     @classmethod
-    def repeat(cls, obj, n: Optional[int] = None):
+    def repeat(cls, obj, n: Optional[int] = None) -> FIt:
         """See itertools.repeat_
 
         .. _itertools.repeat: https://docs.python.org/3/library/itertools.html#itertools.repeat
@@ -442,14 +459,14 @@ class FIt(Iterator[T]):
         it = repeat(obj) if n is None else repeat(obj, n)
         return cls(it, n)
 
-    def starmap(self, function: Callable):
+    def starmap(self, function: Callable) -> FIt:
         """See itertools.starmap_
 
         .. _itertools.starmap: https://docs.python.org/3/library/itertools.html#itertools.starmap
         """  # noqa
         return FIt(starmap(function, self), len_or_none(self))
 
-    def takewhile(self, predicate: Optional[Callable[[Any], bool]] = None):
+    def takewhile(self, predicate: Optional[Callable[[Any], bool]] = None) -> FIt[T]:
         """See itertools.takewhile_
 
         .. _itertools.takewhile: https://docs.python.org/3/library/itertools.html#itertools.takewhile
@@ -458,7 +475,7 @@ class FIt(Iterator[T]):
             predicate = bool
         return FIt(takewhile(predicate, self))
 
-    def tee(self, n: int = 2):
+    def tee(self, n: int = 2) -> List[FIt[T]]:
         """See itertools.tee_
 
         .. _itertools.tee: https://docs.python.org/3/library/itertools.html#itertools.tee
@@ -466,7 +483,7 @@ class FIt(Iterator[T]):
         length = len_or_none(self)
         return [FIt(t, length) for t in tee(self, n)]
 
-    def zip_longest(self, *iterables, fill_value=None):
+    def zip_longest(self, *iterables, fill_value=None) -> FIt[Tuple]:
         """See itertools.zip_longest_
 
         .. _itertools.zip_longest: https://docs.python.org/3/library/itertools.html#itertools.zip_longest
@@ -484,14 +501,14 @@ class FIt(Iterator[T]):
     # itertools recipes #
     #####################
 
-    def take(self, n: int) -> List:
+    def take(self, n: int) -> List[T]:
         """Return the first ``n`` items of the iterable as a list
 
         Cannot be safely used as a static method.
         """
         return list(self.islice(n))
 
-    def tail(self, n: int):
+    def tail(self, n: int) -> FIt[T]:
         """Return an iterator over the last ``n`` items"""
         this_len = len_or_none(self)
         if this_len is None:
@@ -508,7 +525,7 @@ class FIt(Iterator[T]):
             next(self.islice(n, n), None)
         return self
 
-    def get(self, n: int, default=EMPTY):
+    def get(self, n: int, default=EMPTY) -> T:
         """Alias for ``FIt.nth``: returns the nth item or a default value.
 
         If default is not given, raises IndexError.
@@ -533,7 +550,7 @@ class FIt(Iterator[T]):
                 result = default
         return result
 
-    def nth(self, n: int, default=EMPTY):
+    def nth(self, n: int, default=EMPTY) -> T:
         """Returns the nth item or a default value.
 
         If default is not given, raises IndexError.
@@ -541,6 +558,8 @@ class FIt(Iterator[T]):
         Consumes elements up to and including the given index.
 
         Cannot be safely used as a static method.
+
+        Alias for ``.get()``.
         """
         return self.get(n, default)
 
@@ -586,7 +605,7 @@ class FIt(Iterator[T]):
     # others #
     ##########
 
-    def sliding_window(self, n: int):
+    def sliding_window(self, n: int) -> FIt[Tuple[T, ...]]:
         """Iterate over ``n``-length tuples forming a sliding window over the iterable.
 
         :param n: window size
@@ -606,7 +625,7 @@ class FIt(Iterator[T]):
 
         return FIt(gen(self), length)
 
-    def chunk(self, chunksize: int):
+    def chunk(self, chunksize: int) -> FIt[List[T]]:
         """Iterate over ``chunksize``-or-shorter lists which are chunks of the iterable.
 
         :param chunksize: maximum length for each chunk (all but the last chunk will be this size)
@@ -630,7 +649,7 @@ class FIt(Iterator[T]):
 
         return FIt(gen(self), length)
 
-    def interleave(self, *iterables):
+    def interleave(self, *iterables: Iterable[T]) -> FIt[T]:
         """Interleave items from any number of iterables
 
         When an iterable is exhausted, items continue to be yielded from the remaining
@@ -660,7 +679,7 @@ class FIt(Iterator[T]):
 
         return FIt(gen(iterables), length)
 
-    def peek(self, n: Optional[int] = None):
+    def peek(self, n: Optional[int] = None) -> Union[T, List[T]]:
         """Return a list of the next ``n`` items without advancing the iterator.
 
         If ``n`` is None, return a single item.
@@ -685,7 +704,7 @@ class FIt(Iterator[T]):
 
         return peeked[0] if n is None else peeked
 
-    def for_each(self, function: Callable, *args, **kwargs):
+    def for_each(self, function: Callable, *args, **kwargs) -> None:
         """Consume the iterator, applying a callable on each item.
         Return values are discarded.
 
@@ -701,7 +720,7 @@ class FIt(Iterator[T]):
     # logical #
     ###########
 
-    def any(self):
+    def any(self) -> bool:
         """True if any item is truthy, False otherwise.
 
         Consumes as few items as possible.
@@ -713,7 +732,7 @@ class FIt(Iterator[T]):
                 return True
         return False
 
-    def all(self):
+    def all(self) -> bool:
         """False if any item is falsey, True otherwise.
 
         Consumes as few items as possible.
@@ -729,7 +748,7 @@ class FIt(Iterator[T]):
     # optional #
     ############
 
-    def progress(self, **kwargs):
+    def progress(self, **kwargs) -> FIt[T]:
         """Create a tqdm progress bar for this iterable.
 
         :param kwargs: passed to tqdm instance
