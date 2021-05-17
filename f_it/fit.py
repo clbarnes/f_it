@@ -43,7 +43,7 @@ def ensure_FIt(obj):
 
 
 neg_idx_msg = (
-    "Negative indices into FIt are only possible " "when it has a known length"
+    "Negative indices into FIt are only possible when it has a known length"
 )
 
 EMPTY = object()
