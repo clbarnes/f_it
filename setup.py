@@ -16,7 +16,7 @@ setup(
     description="",
     long_description=readme,
     long_description_content_type="text/markdown",
-    packages=find_packages(include=["f_it"]),
+    packages=find_packages(include=["f_it*"]),
     install_requires=[],
     python_requires=">=3.6, <4.0",
     classifiers=[
