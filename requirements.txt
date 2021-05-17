@@ -10,6 +10,7 @@ isort
 mypy
 pdoc3
 pytest
+pytest-benchmark
 setuptools-scm
 setuptools
 wheel

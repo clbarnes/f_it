@@ -10,7 +10,9 @@ Iterator class for functional-esque, postfix-chaining programming.
 
 Note that this package is for convenience/ interface comfort purposes
 and does not provide the guarantees of a true functional language.
-There may be a significant performance overhead to using deeply nested ``FIt`` instances in tight loops.
+
+There may be a significant performance overhead to using deeply nested ``FIt`` instances in tight loops;
+see the benchmarks executed by pytest.
 
 ## Usage
 
