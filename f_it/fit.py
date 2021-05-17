@@ -696,6 +696,34 @@ class FIt(Iterator):
         for item in self:
             function(item, *args, **kwargs)
 
+    ###########
+    # logical #
+    ###########
+
+    def any(self):
+        """True if any item is truthy, False otherwise.
+
+        Consumes as few items as possible.
+
+        :return: bool
+        """
+        for item in self:
+            if item:
+                return True
+        return False
+
+    def all(self):
+        """False if any item is falsey, True otherwise.
+
+        Consumes as few items as possible.
+
+        :return: bool
+        """
+        for item in self:
+            if not item:
+                return False
+        return True
+
     ############
     # optional #
     ############

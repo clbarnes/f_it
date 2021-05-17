@@ -443,3 +443,23 @@ def test_length():
     assert len(fiter) == 4
     fiter.peek()
     assert len(fiter) == 4
+
+
+@pytest.mark.parametrize(["lst", "expected"], [
+    ([0, 0, 0], False),
+    ([0, 0, 1], True),
+    ([], False),
+])
+def test_any(lst, expected):
+    fiter = FIt(lst)
+    assert fiter.any() == expected
+
+
+@pytest.mark.parametrize(["lst", "expected"], [
+    ([1, 1, 1], True),
+    ([1, 1, 0], False),
+    ([], True),
+])
+def test_all(lst, expected):
+    fiter = FIt(lst)
+    assert fiter.all() == expected
