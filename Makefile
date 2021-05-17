@@ -8,7 +8,6 @@ lint:
 	black --check .
 	isort --check .
 	flake8 .
-	mypy .
 
 .PHONY: test
 test:

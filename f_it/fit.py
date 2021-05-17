@@ -21,9 +21,9 @@ from itertools import (
     tee,
     zip_longest,
 )
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Deque, Iterable
 from typing import Iterator as IteratorType
-from typing import List, Optional, Union
+from typing import List, Optional, TypeVar, Union
 
 from f_it.utils import len_or_none, n_permutations, nCr
 
@@ -39,9 +39,11 @@ neg_idx_msg = "Negative indices into FIt are only possible when it has a known l
 
 EMPTY = object()
 
+T = TypeVar("T")
 
-class FIt(Iterator):
-    def __init__(self, iterable: Iterable, length=None):
+
+class FIt(Iterator[T]):
+    def __init__(self, iterable: Iterable[T], length=None):
         """Iterator class providing many postfix functional methods.
 
         Most of these methods can also be used as static methods which take any
@@ -61,7 +63,7 @@ class FIt(Iterator):
             self.init_length = int(length)
 
         self.consumed = 0
-        self.cache = deque()
+        self.cache: Deque[T] = deque()
 
     @property
     def length(self) -> Optional[int]:
@@ -81,7 +83,7 @@ class FIt(Iterator):
         else:
             return length
 
-    def __next__(self):
+    def __next__(self) -> T:
         if self.cache:
             return self.cache.popleft()
         else:
@@ -89,7 +91,7 @@ class FIt(Iterator):
             self.consumed += 1
             return item
 
-    def __add__(self, other: IteratorType):
+    def __add__(self, other: IteratorType[T]):
         """Shorthand for ``FIt.chain(self, other)``.
 
         Requires ``other`` to be an ``Iterator`` (not just an ``Iterable``).
@@ -98,7 +100,7 @@ class FIt(Iterator):
             return self.chain(other)
         return NotImplemented
 
-    def __radd__(self, other: IteratorType):
+    def __radd__(self, other: IteratorType[T]):
         """Shorthand for ``FIt.chain(other, self)``.
 
         Requires ``other`` to be an ``Iterator`` (not just an ``Iterable``!).
@@ -128,7 +130,7 @@ class FIt(Iterator):
                 "FIt indices must be integers or slices, not " + type(idx).__name__
             )
 
-    def next(self):
+    def next(self) -> T:
         """Return the next item in the iterator"""
         return next(self)
 
