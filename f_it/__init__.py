@@ -1,10 +1,9 @@
-"""Top-level package for f_it."""
+"""
+# f_it package
+"""
+from .version import version as __version__  # noqa: F401
+from .version import version_tuple as __version_info__  # noqa: F401
 
 from .fit import FIt
-from .version import __version__
-
-__author__ = """Chris L. Barnes"""
-__email__ = "chrislloydbarnes@gmail.com"
-__version_info__ = tuple(int(n) for n in __version__.split("."))
 
 __all__ = ["FIt"]

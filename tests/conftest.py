@@ -1,4 +1,5 @@
 import pytest
+
 from f_it import FIt
 from f_it.utils import len_or_none
 

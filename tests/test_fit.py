@@ -19,6 +19,7 @@ from itertools import (
 from unittest import mock
 
 import pytest
+
 from f_it import FIt
 from f_it.fit import ensure_FIt
 from f_it.utils import len_or_none

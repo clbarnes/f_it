@@ -1,58 +1,29 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""The setup script."""
-import itertools
-import os
-import runpy
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
-here = os.path.dirname(os.path.realpath(__file__))
-
-with open(os.path.join(here, "README.rst")) as readme_file:
-    readme = readme_file.read()
-
-with open(os.path.join(here, "HISTORY.rst")) as history_file:
-    history = history_file.read()
-
-version = runpy.run_path(os.path.join(here, "f_it", "version.py"))["__version__"]
-
-requirements = []
-
-setup_requirements = ["pytest-runner"]
-
-test_requirements = ["pytest"]
-
-extras_require = {}
-extras_require["all"] = list(itertools.chain.from_iterable(extras_require.values()))
+with open(Path(__file__).resolve().parent / "README.md") as f:
+    readme = f.read()
 
 setup(
+    name="f_it",
+    url="https://github.com/clbarnes/f_it",
     author="Chris L. Barnes",
-    author_email="chrislloydbarnes@gmail.com",
+    description="",
+    long_description=readme,
+    long_description_content_type="text/markdown",
+    packages=find_packages(include=["f_it"]),
+    install_requires=[],
+    python_requires=">=3.6, <4.0",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
-        "Intended Audience :: Developers",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
-        "Natural Language :: English",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
-    description="Iterator class for functional programming",
-    install_requires=requirements,
-    extras_require=extras_require,
-    license="MIT license",
-    long_description=readme + "\n\n" + history,
-    include_package_data=True,
-    keywords="f_it",
-    name="f_it",
-    packages=find_packages(include=["f_it"]),
-    setup_requires=setup_requirements,
-    test_suite="tests",
-    tests_require=test_requirements,
-    url="https://github.com/clbarnes/f_it",
-    version=version,
-    zip_safe=False,
+    use_scm_version=True,
+    setup_requires=["setuptools_scm"],
 )
